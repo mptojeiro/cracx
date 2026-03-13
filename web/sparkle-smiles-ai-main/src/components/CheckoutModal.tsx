@@ -56,7 +56,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             const total = cartTotal.toFixed(2);
             const products = cart.map((c) => `${c.quantity}x ${c.name}`).join(", ");
 
-            const response = await fetch("http://localhost:3000/webhook/new-order", {
+            const response = await fetch("https://cracx.onrender.com/webhook/new-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
