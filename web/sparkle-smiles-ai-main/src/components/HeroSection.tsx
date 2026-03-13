@@ -16,8 +16,8 @@ const HeroSection = () => {
             100% Natural con Xilitol
           </span>
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6">
-            Sweet for <br />
-            <span className="text-gradient-mint">Health Spirit</span>
+            ¡Bienvenidos <br />
+            <span className="text-gradient-mint">cracx!</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed">
             Caramelos saludables que cuidan tus dientes con Xilitol.
