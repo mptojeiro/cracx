@@ -26,18 +26,51 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const normalizePhone = (phone: string) => {
+        // Eliminar todo lo que no sea dígito
+        let cleanPhone = phone.replace(/\D/g, "");
+
+        // Si el usuario puso el +34, ya estará como 34... al quitar el +
+        // Si tiene 9 dígitos (España sin prefijo), le añadimos el 34
+        if (cleanPhone.length === 9) {
+            cleanPhone = "34" + cleanPhone;
+        }
+
+        return cleanPhone;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
 
-        // Basic validation
-        if (!formData.nombre || !formData.telefono || !formData.direccion) {
+        const normalizedPhone = normalizePhone(formData.telefono);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^\d{10,15}$/; // Aceptamos entre 10 y 15 dígitos para cubrir internacionales con prefijo
+
+        // Validaciones avanzadas
+        if (!formData.nombre.trim() || !formData.direccion.trim()) {
             toast({
                 title: "Faltan datos",
-                description: "Por favor, completa nombre, teléfono y dirección de envío.",
+                description: "Por favor, completa tu nombre y dirección de envío.",
                 variant: "destructive"
             });
-            setLoading(false);
+            return;
+        }
+
+        if (!emailRegex.test(formData.email)) {
+            toast({
+                title: "Email inválido",
+                description: "Por favor, introduce un correo electrónico válido.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        if (!phoneRegex.test(normalizedPhone)) {
+            toast({
+                title: "Teléfono inválido",
+                description: "El formato del teléfono no es correcto. Asegúrate de incluir 9 dígitos (o prefijo).",
+                variant: "destructive"
+            });
             return;
         }
 
@@ -47,9 +80,10 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
                 description: "Añade al menos un sabor a tu cesta antes de finalizar.",
                 variant: "destructive"
             });
-            setLoading(false);
             return;
         }
+
+        setLoading(true);
 
         try {
             const orderId = `ORD-${Math.floor(Math.random() * 100000)}`;
@@ -62,7 +96,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
                 body: JSON.stringify({
                     orderId,
                     customerName: formData.nombre,
-                    customerPhone: formData.telefono,
+                    customerPhone: normalizedPhone,
                     customerEmail: formData.email,
                     customerAddress: formData.direccion,
                     products,
